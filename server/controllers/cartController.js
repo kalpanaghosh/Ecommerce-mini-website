@@ -28,7 +28,7 @@ exports.addToCart = async (req, res) => {
     if (existingProductIndex >= 0) {
       cart.products[existingProductIndex].quantity += quantity || 1;
     } else {
-      cart.products.push({ productId, quantity: quantity || 1 });
+      cart.products.push({ productId, quantity: quantity || 1, variant });
     }
 
     await cart.save();
@@ -84,23 +84,17 @@ exports.removeFromCart = async (req, res) => {
 };
 exports.clearCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.user.id });
+    const updatedCart = await Cart.findOneAndUpdate(
+      { userId: req.user.id },
+      { $set: { products: [] } },
+      { new: true }
+    ).populate('products.productId');
 
-    if (!cart) {
-      return res.json({ products: [] });
+    if (!updatedCart) {
+      return res.status(404).json({ message: 'Cart not found' });
     }
 
-    cart.products = [];
-    cart.markModified('products');
-    await cart.save();
-
-
-    const updatedCart = await Cart.findOne({
-      userId: req.user.id
-    }).populate('products.productId');
-
     res.json(updatedCart);
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

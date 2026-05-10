@@ -11,6 +11,10 @@ const CartItemSchema = new mongoose.Schema({
     required: true,
     default: 1,
   },
+  variant: {
+    type: String,
+    required: false,
+  },
 
 });
 

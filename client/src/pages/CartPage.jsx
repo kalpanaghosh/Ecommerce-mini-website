@@ -8,16 +8,16 @@ const CartPage = () => {
 
   if (!cart || !cart.products || cart.products.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 py-12 px-4">
-        <div className="text-center bg-white dark:bg-gray-800 p-12 rounded-3xl shadow-sm border border-gray-100 max-w-md w-full">
-          <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShoppingBag className="w-12 h-12 text-indigo-300" />
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-12 px-4">
+        <div className="text-center bg-white dark:bg-gray-800 p-12 rounded-3xl shadow-xl dark:shadow-none border border-gray-100 dark:border-gray-700 max-w-md w-full">
+          <div className="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-12 h-12 text-indigo-400 dark:text-indigo-500" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your cart is empty</h2>
-          <p className="text-gray-800 dark:text-gray-200 mb-8">Looks like you haven't added anything yet.</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your cart is empty</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">Looks like you haven't added anything to your bag yet.</p>
           <Link
             to="/"
-            className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-lg font-bold rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-200 dark:shadow-none"
           >
             Start Shopping
           </Link>
@@ -34,14 +34,14 @@ const CartPage = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Cart Items List */}
           <div className="flex-1">
-            <div className="bg-white dark:bg-gray-800 shadow-sm rounded-3xl border border-gray-100 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 shadow-sm rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden">
               <ul className="divide-y divide-gray-100">
                 {cart.products.map((item) => {
                   const product = item.productId;
                   if (!product) return null; // In case product was deleted
                   return (
-                    <li key={product._id} className="p-6 flex flex-col sm:flex-row gap-6 hover:bg-gray-50/50 transition-colors">
-                      <div className="sm:w-32 h-32 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                    <li key={product._id} className="p-6 flex flex-col sm:flex-row gap-6 hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors">
+                      <div className="sm:w-32 h-32 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-700">
                         <img
                           src={product.image}
                           alt={product.title}
@@ -104,7 +104,7 @@ const CartPage = () => {
 
           {/* Order Summary */}
           <div className="lg:w-96 flex-shrink-0">
-            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 p-8 sticky top-24">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 sticky top-24">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Order Summary</h2>
 
               <div className="space-y-4 text-sm text-gray-900 mb-6 border-b border-gray-100 pb-6">

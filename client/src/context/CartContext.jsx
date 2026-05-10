@@ -63,8 +63,9 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = async () => {
     try {
-      const { data } = await api.delete('/cart/clear');
-      setCart(data);
+      await api.delete('/cart/clear');
+      setCart({ products: [] });
+      localStorage.removeItem('cart'); // Clear any local storage if used
     } catch (error) {
       console.error('Error clearing cart:', error);
     }

@@ -30,7 +30,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-10 rounded-3xl shadow-xl shadow-indigo-100/50 border border-indigo-50">
+      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-10 rounded-3xl shadow-xl dark:shadow-none border border-indigo-50 dark:border-gray-700">
         <div>
           <div className="mx-auto h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
             <span className="text-white font-bold text-2xl">L</span>
@@ -44,7 +44,7 @@ const LoginPage = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md flex items-start">
+          <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-md flex items-start transition-colors">
             <AlertCircle className="w-5 h-5 text-red-500 mr-3 mt-0.5" />
             <p className="text-sm text-red-700">{error}</p>
           </div>
@@ -66,9 +66,9 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
                   title="Please enter a valid email address"
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow sm:text-sm"
+                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow sm:text-sm bg-white dark:bg-gray-700"
                 />
               </div>
             </div>

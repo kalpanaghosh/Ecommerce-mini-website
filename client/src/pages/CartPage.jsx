@@ -27,7 +27,7 @@ const CartPage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-[calc(100vh-4rem)] py-12">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-8">Shopping Cart</h1>
 
@@ -58,6 +58,7 @@ const CartPage = () => {
                               </Link>
                             </h3>
                             <p className="mt-1 text-sm text-gray-600 dark:text-gray-200 line-clamp-2">{product.description}</p>
+
                           </div>
                           <p className="text-lg font-bold text-gray-900 dark:text-white dark:text-white whitespace-nowrap">
                             ₹{product.price.toLocaleString('en-IN')}

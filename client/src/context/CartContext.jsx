@@ -8,7 +8,6 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(null);
   const { user } = useAuth();
-
   useEffect(() => {
     if (user) {
       fetchCart();
@@ -26,9 +25,13 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const addToCart = async (productId, quantity = 1) => {
+  const addToCart = async (productId, quantity) => {
     try {
-      const { data } = await api.post('/cart', { productId, quantity });
+      const { data } = await api.post('/cart', {
+        productId,
+        quantity,
+
+      });
       setCart(data);
       toast.success('Product added to cart 🛒');
     } catch (error) {
@@ -58,14 +61,35 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const cartTotal = cart?.products?.reduce((acc, item) => {
-    return acc + (item.productId?.price || 0) * item.quantity;
-  }, 0) || 0;
+  const clearCart = async () => {
+    try {
+      const { data } = await api.delete('/cart/clear');
+      setCart(data);
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+    }
+  };
+
+  const cartTotal =
+    cart?.products?.reduce((acc, item) => {
+      return acc + (item.productId?.price || 0) * item.quantity;
+    }, 0) || 0;
 
   const cartItemCount = cart?.products?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeFromCart, cartTotal, cartItemCount, fetchCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        updateQuantity,
+        removeFromCart,
+        clearCart,
+        cartTotal,
+        cartItemCount,
+        fetchCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

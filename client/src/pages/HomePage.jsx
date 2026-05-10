@@ -227,7 +227,7 @@ const HomePage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-[calc(100vh-4rem)] pb-12">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300 [calc(100vh-4rem)] pb-12">
       {/* Hero Banner */}
       <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-950 overflow-hidden mb-12 py-20 lg:py-28">
         {/* Abstract Background Shapes */}

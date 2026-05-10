@@ -3,7 +3,7 @@ const Cart = require('../models/Cart');
 exports.getCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({ userId: req.user.id }).populate('products.productId');
-    
+
     if (!cart) {
       cart = await Cart.create({ userId: req.user.id, products: [] });
     }
@@ -16,14 +16,14 @@ exports.getCart = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
+    const { productId, quantity, variant } = req.body;
     let cart = await Cart.findOne({ userId: req.user.id });
 
     if (!cart) {
       cart = await Cart.create({ userId: req.user.id, products: [] });
     }
 
-    const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === productId);
+    const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === productId && p.variant === variant);
 
     if (existingProductIndex >= 0) {
       cart.products[existingProductIndex].quantity += quantity || 1;
@@ -46,7 +46,7 @@ exports.updateCartQuantity = async (req, res) => {
 
     if (cart) {
       const productIndex = cart.products.findIndex(p => p.productId.toString() === productId);
-      
+
       if (productIndex >= 0) {
         if (quantity <= 0) {
           cart.products.splice(productIndex, 1);
@@ -58,7 +58,7 @@ exports.updateCartQuantity = async (req, res) => {
         return res.json(updatedCart);
       }
     }
-    
+
     res.status(404).json({ message: 'Cart or product not found' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -82,3 +82,30 @@ exports.removeFromCart = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.clearCart = async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ userId: req.user.id });
+
+    if (!cart) {
+      return res.json({ products: [] });
+    }
+
+    cart.products = [];
+    cart.markModified('products');
+    await cart.save();
+
+
+    const updatedCart = await Cart.findOne({
+      userId: req.user.id
+    }).populate('products.productId');
+
+    res.json(updatedCart);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+

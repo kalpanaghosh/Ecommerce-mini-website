@@ -1,13 +1,18 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { CheckCircle } from 'lucide-react';
 
 const CheckoutPage = () => {
-  const { cartTotal } = useCart();
+  const { cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
+  useEffect(() => {
+    clearCart();
+  }, []);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 py-12 px-4">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+
       <div className="max-w-md w-full bg-white dark:bg-gray-800 p-10 rounded-3xl shadow-sm border border-gray-100 text-center">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle className="w-10 h-10 text-green-500" />
@@ -24,13 +29,16 @@ const CheckoutPage = () => {
         </div>
 
         <button
-          onClick={() => navigate('/')}
+          onClick={async () => {
+            await clearCart();
+            navigate('/');
+          }}
           className="w-full bg-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors"
         >
           Back to Home
         </button>
       </div>
-    </div>
+    </div >
   );
 };
 

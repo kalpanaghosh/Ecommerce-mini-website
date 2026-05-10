@@ -43,7 +43,6 @@ const ProductDetailsPage = () => {
   const [error, setError] = useState('');
   const [imgSrc, setImgSrc] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState("256GB");
 
   const { addToCart } = useCart();
   const { user } = useAuth();
@@ -184,26 +183,6 @@ const ProductDetailsPage = () => {
 
               <div className="prose prose-indigo dark:prose-invert text-gray-600 dark:text-gray-200 mb-8">
                 <p className="leading-relaxed">{product.description}</p>
-              </div>
-
-              <div className="mb-6">
-                <h3 className="font-semibold mb-3 dark:text-white">
-                  Select Variant
-                </h3>
-                <div className="flex gap-3 flex-wrap">
-                  {["128GB", "256GB", "512GB"].map((variant) => (
-                    <button
-                      key={variant}
-                      onClick={() => setSelectedVariant(variant)}
-                      className={`px-4 py-2 rounded-lg border transition-all ${selectedVariant === variant
-                        ? "bg-indigo-600 text-white border-indigo-600"
-                        : "bg-white dark:bg-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
-                        }`}
-                    >
-                      {variant}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="mt-auto pt-8 border-t border-gray-100 dark:border-gray-700">

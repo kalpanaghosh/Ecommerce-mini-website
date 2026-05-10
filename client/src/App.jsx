@@ -29,47 +29,47 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 font-sans text-gray-900 dark:text-gray-100 transition-colors duration-300">
+              <div className="min-h-screen flex flex-col bg-white dark:bg-gray-800 text-black dark:bg-gray-950 dark:text-white font-sans transition-all duration-300">
                 <Navbar />
                 <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/product/:id" element={<ProductDetailsPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route 
-                  path="/cart" 
-                  element={
-                    <ProtectedRoute>
-                      <CartPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/checkout" 
-                  element={
-                    <ProtectedRoute>
-                      <CheckoutPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/wishlist" 
-                  element={
-                    <ProtectedRoute>
-                      <WishlistPage />
-                    </ProtectedRoute>
-                  } 
-                />
-              </Routes>
-            </main>
-            <Footer />
-            <BackToTop />
-            <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
-          </div>
-        </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/product/:id" element={<ProductDetailsPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                      path="/cart"
+                      element={
+                        <ProtectedRoute>
+                          <CartPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/checkout"
+                      element={
+                        <ProtectedRoute>
+                          <CheckoutPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/wishlist"
+                      element={
+                        <ProtectedRoute>
+                          <WishlistPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                  </Routes>
+                </main>
+                <Footer />
+                <BackToTop />
+                <ToastContainer position="bottom-right" autoClose={3000} theme="colored" />
+              </div>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
       </ThemeProvider>
     </Router>
   );

@@ -20,16 +20,15 @@ const StarRating = ({ rating = 4 }) => {
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
-          className={`w-5 h-5 ${
-            i < full
-              ? 'text-amber-400 fill-amber-400'
-              : i === full && hasHalf
+          className={`w-5 h-5 ${i < full
+            ? 'text-amber-400 fill-amber-400'
+            : i === full && hasHalf
               ? 'text-amber-400 fill-amber-400 opacity-50'
               : 'text-gray-300'
-          }`}
+            }`}
         />
       ))}
-      <span className="text-sm text-gray-500 ml-2">{rating.toFixed(1)} / 5.0</span>
+      <span className="text-sm text-gray-600 dark:text-gray-200 ml-2">{rating.toFixed(1)} / 5.0</span>
     </div>
   );
 };
@@ -43,11 +42,13 @@ const ProductDetailsPage = () => {
   const [added, setAdded] = useState(false);
   const [error, setError] = useState('');
   const [imgSrc, setImgSrc] = useState('');
-  
+  const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState("256GB");
+
   const { addToCart } = useCart();
   const { user } = useAuth();
   const { wishlist, toggleWishlist } = useWishlist();
-  
+
   const isWishlisted = product && wishlist?.products?.some(p => p._id === product._id || p === product._id);
 
   useEffect(() => {
@@ -70,10 +71,10 @@ const ProductDetailsPage = () => {
       navigate('/login');
       return;
     }
-    
+
     setAdding(true);
     try {
-      await addToCart(product._id, 1);
+      await addToCart(product._id, quantity);
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
     } catch (err) {
@@ -112,7 +113,7 @@ const ProductDetailsPage = () => {
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Oops!</h2>
-          <p className="text-gray-500 dark:text-gray-400">{error || 'Something went wrong'}</p>
+          <p className="text-gray-600 dark:text-gray-200 ">{error || 'Something went wrong'}</p>
           <button onClick={() => navigate('/')} className="mt-6 text-indigo-600 dark:text-indigo-400 hover:underline">
             Go back home
           </button>
@@ -124,9 +125,9 @@ const ProductDetailsPage = () => {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-[calc(100vh-4rem)] py-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button 
-          onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors mb-8"
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-200 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400 transition-colors mb-8"
         >
           <ArrowLeft className="w-5 h-5" />
           Back to products
@@ -136,32 +137,31 @@ const ProductDetailsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 md:p-12">
             {/* Product Image with fallback */}
             <div className="rounded-2xl overflow-hidden bg-gray-100 aspect-square md:aspect-auto">
-              <img 
-                src={imgSrc} 
-                alt={product.title} 
+              <img
+                src={imgSrc}
+                alt={product.title}
                 onError={() => setImgSrc(FALLBACK_IMAGE)}
                 className="w-full h-full object-cover"
               />
             </div>
-            
+
             {/* Product Details */}
             <div className="flex flex-col justify-center relative">
               <div className="mb-2 flex gap-2">
-                <span className="inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 text-xs font-semibold rounded-full uppercase tracking-wider">
+                <span className="inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-300 text-xs font-semibold rounded-full uppercase tracking-wider dark:text-gray-300">
                   {product.category || 'New Arrival'}
                 </span>
               </div>
-              
-              <button 
+
+              <button
                 onClick={(e) => {
                   e.preventDefault();
                   toggleWishlist(product._id);
                 }}
-                className={`absolute top-0 right-0 p-3 rounded-full shadow-sm transition-all duration-300 hover:scale-110 active:scale-95 group/heart ${
-                  isWishlisted 
-                    ? 'bg-rose-50/90 dark:bg-rose-900/50 text-rose-500' 
-                    : 'bg-gray-50 dark:bg-gray-700 text-gray-400 hover:text-rose-400'
-                }`}
+                className={`absolute top-0 right-0 p-3 rounded-full shadow-sm transition-all duration-300 hover:scale-110 active:scale-95 group/heart ${isWishlisted
+                  ? 'bg-rose-50/90 dark:bg-rose-900/50 text-rose-500'
+                  : 'bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-200 hover:text-rose-400'
+                  }`}
                 title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
               >
                 <Heart className={`w-6 h-6 transition-all duration-300 ${isWishlisted ? 'fill-rose-500 scale-110' : 'group-hover/heart:scale-110'}`} />
@@ -181,18 +181,69 @@ const ProductDetailsPage = () => {
               <p className="text-3xl font-light text-indigo-600 dark:text-indigo-400 mb-6">
                 ₹{typeof product.price === 'number' ? product.price.toLocaleString('en-IN') : Number(product.price).toLocaleString('en-IN')}
               </p>
-              
-              <div className="prose prose-indigo dark:prose-invert text-gray-500 dark:text-gray-400 mb-8">
+
+              <div className="prose prose-indigo dark:prose-invert text-gray-600 dark:text-gray-200 mb-8">
                 <p className="leading-relaxed">{product.description}</p>
               </div>
 
+              <div className="mb-6">
+                <h3 className="font-semibold mb-3 dark:text-white">
+                  Select Variant
+                </h3>
+                <div className="flex gap-3 flex-wrap">
+                  {["128GB", "256GB", "512GB"].map((variant) => (
+                    <button
+                      key={variant}
+                      onClick={() => setSelectedVariant(variant)}
+                      className={`px-4 py-2 rounded-lg border transition-all ${selectedVariant === variant
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "bg-white dark:bg-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
+                        }`}
+                    >
+                      {variant}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="mt-auto pt-8 border-t border-gray-100 dark:border-gray-700">
+
+
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="font-medium dark:text-white">
+                    Quantity:
+                  </span>
+
+                  <div className="flex items-center border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+
+                    <button
+                      onClick={() =>
+                        quantity > 1 && setQuantity(quantity - 1)
+                      }
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 dark:text-white hover:bg-gray-200"
+                    >
+                      -
+                    </button>
+
+                    <span className="px-5 py-2 dark:text-white">
+                      {quantity}
+                    </span>
+
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 dark:text-white hover:bg-gray-200"
+                    >
+                      +
+                    </button>
+
+                  </div>
+                </div>
+
                 <button
                   onClick={handleAddToCart}
                   disabled={adding}
-                  className={`w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-lg font-bold text-white transition-all duration-300 shadow-lg ${
-                    added ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-indigo-500/30 hover:-translate-y-1 active:scale-95'
-                  } disabled:opacity-75 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100`}
+                  className={`w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-lg font-bold text-white transition-all duration-300 shadow-lg ${added ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:shadow-indigo-500/30 hover:-translate-y-1 active:scale-95'
+                    } disabled:opacity-75 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100`}
                 >
                   {added ? (
                     <>
@@ -215,7 +266,7 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

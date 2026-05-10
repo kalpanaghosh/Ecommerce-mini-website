@@ -13,7 +13,7 @@ const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -45,7 +45,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white/85 dark:bg-gray-900/85 backdrop-blur-md shadow-sm border-b border-gray-200/50 dark:border-gray-800/50 sticky top-0 z-50 transition-all duration-300">
+    <nav className="bg-white/85 dark:bg-gray-900/85 backdrop-blur-md shadow-sm border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -62,14 +62,14 @@ const Navbar = () => {
           <div className="hidden md:flex flex-1 max-w-md mx-6">
             <div className="relative w-full group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
+                <Search className="h-5 w-5 text-gray-600 dark:text-gray-200 group-focus-within:text-indigo-500 transition-colors" />
               </div>
               <input
                 type="text"
                 placeholder="Search products, categories..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-full leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-300"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-full leading-5 bg-gray-50 dark:bg-gray-700 dark:text-white text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-300"
               />
             </div>
           </div>
@@ -79,7 +79,7 @@ const Navbar = () => {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 text-gray-600 dark:text-gray-200 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               title="Toggle Dark Mode"
             >
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -88,7 +88,7 @@ const Navbar = () => {
             {user ? (
               <>
                 {/* Wishlist Icon */}
-                <Link to="/wishlist" className="relative text-gray-600 hover:text-rose-500 dark:text-gray-400 dark:hover:text-rose-400 transition-all duration-300 hover:scale-110">
+                <Link to="/wishlist" className="relative text-gray-600 hover:text-rose-500 dark:text-white dark:hover:text-rose-400 transition-all duration-300 hover:scale-110">
                   <Heart className="w-6 h-6" />
                   {wishlistCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
@@ -98,7 +98,7 @@ const Navbar = () => {
                 </Link>
 
                 {/* Cart Icon */}
-                <Link to="/cart" className="relative text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-all duration-300 hover:scale-110">
+                <Link to="/cart" className="relative text-gray-600 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400 transition-all duration-300 hover:scale-110">
                   <ShoppingCart className="w-6 h-6" />
                   {cartItemCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
@@ -106,11 +106,11 @@ const Navbar = () => {
                     </span>
                   )}
                 </Link>
-                
+
                 {/* Desktop User Menu */}
                 <div className="hidden md:flex items-center gap-4 border-l border-gray-200 dark:border-gray-700 pl-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                    <UserIcon className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-200">
+                    <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-200" />
                     <span>{user.email}</span>
                   </div>
                   <button
@@ -126,7 +126,7 @@ const Navbar = () => {
               <div className="hidden md:flex items-center gap-4">
                 <Link
                   to="/login"
-                  className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium text-sm transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 font-medium text-sm transition-colors"
                 >
                   Log in
                 </Link>
@@ -142,7 +142,7 @@ const Navbar = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="md:hidden p-2 rounded-md text-gray-600 dark:text-gray-200 hover:text-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -152,24 +152,24 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 pt-2 pb-4 space-y-4">
+        <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 pt-2 pb-4 space-y-4">
           <div className="relative w-full group mt-2">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5 text-gray-600 dark:text-gray-200" />
             </div>
             <input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-full bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-          
+
           {user ? (
             <div className="space-y-3 pt-2 border-t border-gray-100 dark:border-gray-800">
-              <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 font-medium">
-                <UserIcon className="w-4 h-4 text-gray-400" />
+              <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-white font-medium">
+                <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-200" />
                 {user.email}
               </div>
               <button
@@ -185,7 +185,7 @@ const Navbar = () => {
               <Link
                 to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="w-full text-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full text-gray-700 dark:text-white font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Log in
               </Link>

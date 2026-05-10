@@ -14,7 +14,7 @@ const WishlistPage = () => {
             <Heart className="w-12 h-12 text-rose-300 dark:text-rose-500" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your Wishlist is Empty</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-8">Save items you love here and buy them later.</p>
+          <p className="text-gray-600 dark:text-gray-200 mb-8">Save items you love here and buy them later.</p>
           <Link
             to="/"
             className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
@@ -33,7 +33,7 @@ const WishlistPage = () => {
           <Heart className="w-8 h-8 text-rose-500 fill-rose-500" />
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Your Wishlist</h1>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {wishlist.products.map((product) => {
             if (!product || !product._id) return null;
@@ -50,20 +50,20 @@ const WishlistPage = () => {
                       e.preventDefault();
                       toggleWishlist(product._id);
                     }}
-                    className="absolute top-3 right-3 p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur text-red-500 rounded-full hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors"
+                    className="absolute top-3 right-3 p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur text-red-500 rounded-full hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors"
                     title="Remove from wishlist"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                
+
                 <div className="p-5 flex flex-col flex-grow">
                   <Link to={`/product/${product._id}`}>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-1 hover:text-indigo-600 transition-colors">
                       {product.title}
                     </h3>
                   </Link>
-                  <p className="mt-1 flex-grow text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+                  <p className="mt-1 flex-grow text-sm text-gray-600 dark:text-gray-200 line-clamp-2">
                     {product.description}
                   </p>
                   <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">

@@ -19,6 +19,7 @@ import CartPage from './pages/CartPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CheckoutPage from './pages/CheckoutPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 import WishlistPage from './pages/WishlistPage';
 
 function App() {
@@ -50,6 +51,14 @@ function App() {
                       element={
                         <ProtectedRoute>
                           <CheckoutPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/order-success"
+                      element={
+                        <ProtectedRoute>
+                          <OrderSuccessPage />
                         </ProtectedRoute>
                       }
                     />

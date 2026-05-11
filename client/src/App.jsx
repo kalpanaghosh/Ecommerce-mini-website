@@ -20,6 +20,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
+import OrdersPage from './pages/OrdersPage';
 import WishlistPage from './pages/WishlistPage';
 
 function App() {
@@ -59,6 +60,14 @@ function App() {
                       element={
                         <ProtectedRoute>
                           <OrderSuccessPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/orders"
+                      element={
+                        <ProtectedRoute>
+                          <OrdersPage />
                         </ProtectedRoute>
                       }
                     />

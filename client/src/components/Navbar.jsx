@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useTheme } from '../context/ThemeContext';
-import { ShoppingCart, LogOut, User as UserIcon, Heart, Search, Moon, Sun, Menu, X } from 'lucide-react';
+import { ShoppingCart, LogOut, User as UserIcon, Heart, Search, Moon, Sun, Menu, X, Package } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -113,6 +113,9 @@ const Navbar = () => {
                     <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-200" />
                     <span>{user.email}</span>
                   </div>
+                  <Link to="/orders" className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 transition-colors">
+                    My Orders
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
@@ -172,6 +175,14 @@ const Navbar = () => {
                 <UserIcon className="w-4 h-4 text-gray-600 dark:text-gray-200" />
                 {user.email}
               </div>
+              <Link
+                to="/orders"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full flex justify-center items-center gap-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full text-sm font-medium transition-colors"
+              >
+                <Package className="w-4 h-4" />
+                My Orders
+              </Link>
               <button
                 onClick={handleLogout}
                 className="w-full flex justify-center items-center gap-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-full text-sm font-medium transition-colors"

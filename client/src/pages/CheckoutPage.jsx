@@ -25,7 +25,8 @@ const CheckoutPage = () => {
   });
 
   useEffect(() => {
-    if (!cart || cart.products.length === 0) {
+    // If cart is empty, user shouldn't be here
+    if (cart && cart.products.length === 0) {
       navigate('/cart');
       return;
     }
@@ -44,7 +45,8 @@ const CheckoutPage = () => {
       }
     } catch (error) {
       console.error('Error fetching addresses:', error);
-      toast.error('Failed to load addresses');
+      setAddresses([]);
+      setShowAddressForm(true);
     } finally {
       setLoading(false);
     }
@@ -56,12 +58,13 @@ const CheckoutPage = () => {
   };
 
   const validateForm = () => {
-    if (!formData.fullName || !formData.phoneNumber || !formData.pincode || !formData.state || !formData.city || !formData.houseNo) {
+    const { fullName, phoneNumber, pincode, state, city, houseNo } = formData;
+    if (!fullName || !phoneNumber || !pincode || !state || !city || !houseNo) {
       toast.error('Please fill all required fields');
       return false;
     }
-    if (!/^\d{10}$/.test(formData.phoneNumber)) {
-      toast.error('Please enter a valid 10-digit phone number');
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      toast.error('Please enter a valid 10-digit mobile number');
       return false;
     }
     return true;
@@ -74,7 +77,7 @@ const CheckoutPage = () => {
     setSubmitting(true);
     try {
       const { data } = await api.post('/address', formData);
-      setAddresses([...addresses, data]);
+      setAddresses((prev) => [data, ...prev]);
       setSelectedAddress(data);
       setShowAddressForm(false);
       setFormData({
@@ -86,9 +89,9 @@ const CheckoutPage = () => {
         houseNo: '',
         landmark: '',
       });
-      toast.success('Address added successfully');
+      toast.success('New address added');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to add address');
+      toast.error(error.response?.data?.message || 'Failed to save address');
     } finally {
       setSubmitting(false);
     }
@@ -102,9 +105,11 @@ const CheckoutPage = () => {
 
     setSubmitting(true);
     try {
+      const totalAmount = cartTotal + cartTotal * 0.05; // Base + 5% dummy tax
+
       const orderData = {
         address: selectedAddress,
-        totalAmount: cartTotal + cartTotal * 0.05, // Including 5% tax/shipping dummy
+        totalAmount: totalAmount,
         products: cart.products.map(item => ({
           productId: item.productId._id,
           quantity: item.quantity,
@@ -113,42 +118,51 @@ const CheckoutPage = () => {
       };
 
       await api.post('/order', orderData);
-      await clearCart();
+
       toast.success('Order placed successfully! 🎉');
-      navigate('/order-success');
+
+      navigate('/order-success', {
+        state: { total: totalAmount }
+      });
+
+      // Clear cart AFTER navigation
+      setTimeout(async () => {
+        await clearCart();
+      }, 500);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to place order');
+      console.error('Checkout error:', error);
+      toast.error(error.response?.data?.message || 'Something went wrong while placing order');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) {
+  if (loading && !addresses.length) {
     return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
         <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">Checkout</h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Address Selection */}
+          {/* Left Column: Address Selection/Form */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between mb-6">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
+              <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-indigo-600" />
+                  <MapPin className="w-6 h-6 text-indigo-600" />
                   Delivery Address
                 </h2>
                 {!showAddressForm && (
                   <button
                     onClick={() => setShowAddressForm(true)}
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                    className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5"
                   >
                     <Plus className="w-4 h-4" />
                     Add New Address
@@ -157,41 +171,41 @@ const CheckoutPage = () => {
               </div>
 
               {showAddressForm ? (
-                <form onSubmit={handleAddAddress} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative">
-                      <User className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                <form onSubmit={handleAddAddress} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="relative group">
+                      <User className="absolute left-4 top-4 w-5 h-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                       <input
                         type="text"
                         name="fullName"
                         placeholder="Full Name"
                         value={formData.fullName}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                        className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                         required
                       />
                     </div>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                    <div className="relative group">
+                      <Phone className="absolute left-4 top-4 w-5 h-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                       <input
                         type="tel"
                         name="phoneNumber"
                         placeholder="10-digit Mobile Number"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                        className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                         required
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <input
                       type="text"
                       name="pincode"
                       placeholder="Pincode"
                       value={formData.pincode}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                      className="w-full px-5 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                       required
                     />
                     <input
@@ -200,7 +214,7 @@ const CheckoutPage = () => {
                       placeholder="City"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                      className="w-full px-5 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                       required
                     />
                     <input
@@ -209,19 +223,19 @@ const CheckoutPage = () => {
                       placeholder="State"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                      className="w-full px-5 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                       required
                     />
                   </div>
-                  <div className="relative">
-                    <Home className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+                  <div className="relative group">
+                    <Home className="absolute left-4 top-4 w-5 h-5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
                     <input
                       type="text"
                       name="houseNo"
                       placeholder="House No / Area / Street"
                       value={formData.houseNo}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                      className="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                       required
                     />
                   </div>
@@ -231,21 +245,21 @@ const CheckoutPage = () => {
                     placeholder="Landmark (Optional)"
                     value={formData.landmark}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
+                    className="w-full px-5 py-3.5 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                   />
-                  <div className="flex gap-4 pt-2">
+                  <div className="flex gap-4 pt-4">
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                      className="flex-1 bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition-all disabled:opacity-50 shadow-lg shadow-indigo-200 dark:shadow-none"
                     >
-                      {submitting ? 'Saving...' : 'Save and Use This Address'}
+                      {submitting ? 'Saving Address...' : 'Save & Use This Address'}
                     </button>
                     {addresses.length > 0 && (
                       <button
                         type="button"
                         onClick={() => setShowAddressForm(false)}
-                        className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
                       >
                         Cancel
                       </button>
@@ -253,27 +267,26 @@ const CheckoutPage = () => {
                   </div>
                 </form>
               ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {addresses.map((addr) => (
                     <div
                       key={addr._id}
                       onClick={() => setSelectedAddress(addr)}
-                      className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                        selectedAddress?._id === addr._id
-                          ? 'border-indigo-600 bg-indigo-50/50 dark:bg-indigo-900/10'
-                          : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600'
-                      }`}
+                      className={`relative p-6 rounded-3xl border-2 transition-all cursor-pointer transform hover:-translate-y-1 ${selectedAddress?._id === addr._id
+                        ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-900/10'
+                        : 'border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700'
+                        }`}
                     >
                       {selectedAddress?._id === addr._id && (
                         <div className="absolute top-4 right-4 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center">
                           <Check className="w-4 h-4 text-white" />
                         </div>
                       )}
-                      <p className="font-bold text-gray-900 dark:text-white text-lg mb-1">{addr.fullName}</p>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2 flex items-center gap-2">
+                      <p className="font-bold text-gray-900 dark:text-white text-lg mb-2">{addr.fullName}</p>
+                      <p className="text-gray-600 dark:text-gray-400 mb-3 flex items-center gap-2 text-sm">
                         <Phone className="w-4 h-4" /> {addr.phoneNumber}
                       </p>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                         {addr.houseNo}, {addr.landmark && `${addr.landmark}, `}
                         {addr.city}, {addr.state} - {addr.pincode}
                       </p>
@@ -284,47 +297,47 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Order Summary */}
+          {/* Right Column: Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 p-8 sticky top-24">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-8">Order Summary</h2>
+
+              <div className="space-y-4 mb-8">
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                  <span>Price ({cart?.products?.length} items)</span>
-                  <span>₹{cartTotal.toLocaleString('en-IN')}</span>
+                  <span>Items ({cart?.products?.length})</span>
+                  <span className="font-medium text-gray-900 dark:text-white">₹{cartTotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                  <span>Delivery Charges</span>
-                  <span className="text-green-500 font-medium">FREE</span>
+                  <span>Shipping</span>
+                  <span className="text-green-500 font-bold">FREE</span>
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Tax (5%)</span>
-                  <span>₹{(cartTotal * 0.05).toLocaleString('en-IN')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">₹{(cartTotal * 0.05).toLocaleString('en-IN')}</span>
                 </div>
-                <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
+                <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
                   <span className="text-lg font-bold text-gray-900 dark:text-white">Total Amount</span>
-                  <span className="text-lg font-bold text-indigo-600">₹{(cartTotal + cartTotal * 0.05).toLocaleString('en-IN')}</span>
+                  <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400">₹{(cartTotal + cartTotal * 0.05).toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
               <button
                 onClick={handlePlaceOrder}
                 disabled={submitting || !selectedAddress || showAddressForm}
-                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
+                className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 dark:shadow-none disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 flex items-center justify-center gap-3"
               >
                 {submitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-5 h-5 animate-spin" /> Processing...
-                  </span>
+                  <>
+                    <Loader2 className="w-6 h-6 animate-spin" /> Processing...
+                  </>
                 ) : (
-                  'Place Order'
+                  'Place Order Now'
                 )}
               </button>
-              
+
               {!selectedAddress && !showAddressForm && (
-                <p className="mt-3 text-sm text-red-500 text-center font-medium">
-                  Please select or add a delivery address
+                <p className="mt-4 text-sm text-red-500 text-center font-bold bg-red-50 dark:bg-red-900/10 py-2 rounded-lg">
+                  Please select a delivery address
                 </p>
               )}
             </div>

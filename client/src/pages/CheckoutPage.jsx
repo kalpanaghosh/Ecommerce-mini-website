@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import api from '../api/axios';
 import { toast } from 'react-toastify';
-import { MapPin, Phone, User, Home, Plus, Check, Loader2 } from 'lucide-react';
+import { MapPin, Phone, User, Home, Plus, Check, Loader2, Trash2 } from 'lucide-react';
 
 const CheckoutPage = () => {
   const { cart, cartTotal, clearCart } = useCart();
@@ -96,6 +96,27 @@ const CheckoutPage = () => {
       setSubmitting(false);
     }
   };
+
+  const handleDeleteAddress = async (id) => {
+    try {
+      await api.delete(`/address/${id}`);
+
+      const updatedAddresses = addresses.filter(
+        (address) => address._id !== id
+      );
+
+      setAddresses(updatedAddresses);
+
+      if (selectedAddress?._id === id) {
+        setSelectedAddress(null);
+      }
+
+      toast.success("Address deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete address");
+    }
+  };
+
 
   const handlePlaceOrder = async () => {
     if (!selectedAddress) {
@@ -290,6 +311,13 @@ const CheckoutPage = () => {
                         {addr.houseNo}, {addr.landmark && `${addr.landmark}, `}
                         {addr.city}, {addr.state} - {addr.pincode}
                       </p>
+                      <button
+                        onClick={() => handleDeleteAddress(address._id)}
+                        className="absolute top-3 right-3 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+
                     </div>
                   ))}
                 </div>

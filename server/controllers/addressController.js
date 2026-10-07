@@ -50,17 +50,18 @@ exports.addAddress = async (req, res) => {
 };
 exports.deleteAddress = async (req, res) => {
   try {
-    const address = await Address.findOneAndDelete({
+    const deletedAddress = await Address.findOneAndDelete({
       _id: req.params.id,
       userId: req.user.id,
     });
 
-    if (!address) {
+    if (!deletedAddress) {
       return res.status(404).json({ message: "Address not found" });
     }
 
     res.json({ message: "Address deleted successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };

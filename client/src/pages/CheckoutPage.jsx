@@ -102,18 +102,24 @@ const CheckoutPage = () => {
       await api.delete(`/address/${id}`);
 
       const updatedAddresses = addresses.filter(
-        (address) => address._id !== id
+        (item) => item._id !== id
       );
 
       setAddresses(updatedAddresses);
 
       if (selectedAddress?._id === id) {
-        setSelectedAddress(null);
+        if (updatedAddresses.length > 0) {
+          setSelectedAddress(updatedAddresses[0]);
+        } else {
+          setSelectedAddress(null);
+          setShowAddressForm(true);
+        }
       }
 
-      toast.success("Address deleted successfully");
+      toast.success('Address deleted successfully');
     } catch (error) {
-      toast.error("Failed to delete address");
+      console.error(error);
+      toast.error('Failed to delete address');
     }
   };
 
@@ -312,8 +318,8 @@ const CheckoutPage = () => {
                         {addr.city}, {addr.state} - {addr.pincode}
                       </p>
                       <button
-                        onClick={() => handleDeleteAddress(address._id)}
-                        className="absolute top-3 right-3 text-red-500 hover:text-red-700"
+                        onClick={() => handleDeleteAddress(addr._id)}
+                        className="absolute top-3 right-3 z-50 text-red-500 hover:text-red-700"
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
